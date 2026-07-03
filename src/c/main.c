@@ -98,14 +98,14 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       break;
     case GATTER_O:
       graphics_fill_rect(ctx, GRect(x + 1, my, CELL_W - 8, 3), 0, GCornerNone);
-      graphics_draw_line(ctx, GPoint(x + CELL_W - 7, y + 2), GPoint(x + CELL_W - 2, my));
+      graphics_draw_line(ctx, GPoint(x + CELL_W - 7, my), GPoint(x + CELL_W - 2, y + 2));
       break;
     case GATTER_M:
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 2, 3), 0, GCornerNone);
       break;
     case GATTER_U:
       graphics_fill_rect(ctx, GRect(x + 1, my - 2, CELL_W - 8, 3), 0, GCornerNone);
-      graphics_draw_line(ctx, GPoint(x + CELL_W - 7, y + CELL_H - 2), GPoint(x + CELL_W - 2, my));
+      graphics_draw_line(ctx, GPoint(x + CELL_W - 7, my), GPoint(x + CELL_W - 2, y + CELL_H - 2));
       break;
     case LEER:
       break;
@@ -406,6 +406,7 @@ static void advance_show(void) {
       gs->enemy.num = s_droid_types[gs->enemy_idx];
       gs->enemy.cls = droid_class(gs->enemy.num, 7);
       gs->enemy.caps = ENEMY_CAPSULES(gs->enemy.cls);
+      vibes_double_pulse();
     } else {
       gs->player.num = 1;
       gs->player.idx = 0;
@@ -481,7 +482,6 @@ static void select_handler(ClickRecognizerRef recognizer, void *ctx) {
       gs->board[gs->your_color][0][row] = VERSTAERKER;
       gs->activation[gs->your_color][0][row] = ACTIVE1;
       gs->capsule_countdown[gs->your_color][row] = CAPSULE_COUNTDOWN * 2;
-      vibes_short_pulse();
     }
     layer_mark_dirty(s_canvas);
   }
