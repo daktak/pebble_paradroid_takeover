@@ -139,6 +139,9 @@ static void draw_led_col(GContext *ctx, int x, int y, int display_column[], int 
 }
 
 static void draw_board(GContext *ctx, GameState *gs) {
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
+
   int by = GRID_Y;
 
   // Draw yellow grid (left side)
