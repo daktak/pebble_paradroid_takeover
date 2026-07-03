@@ -236,7 +236,7 @@ static void draw_hud(GContext *ctx, GameState *gs) {
     switch (gs->leader_color) {
       case GELB: bar_col = GColorYellow; break;
       case VIOLETT: bar_col = GColorVividViolet; break;
-      default: bar_col = GColorDarkGray; break;
+      default: bar_col = (gs->tick & 1) ? GColorYellow : GColorVividViolet; break;
     }
     graphics_context_set_fill_color(ctx, bar_col);
     graphics_fill_rect(ctx, GRect(10, BOT_BAR_Y + 4, bar_w, 6), 2, GCornersAll);
