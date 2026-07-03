@@ -71,10 +71,13 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
     case KABEL:
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 2, 3), 0, GCornerNone);
       break;
-    case KABELENDE:
+    case KABELENDE: {
+      GColor c = color == GELB ? GColorYellow : GColorVividViolet;
+      graphics_context_set_fill_color(ctx, c);
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 5, 3), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(x + CELL_W - 5, my - 2, 4, 4), 0, GCornerNone);
       break;
+    }
     case VERSTAERKER:
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 8, 3), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(x + CELL_W - 7, my - 4, 6, 8), 0, GCornerNone);
