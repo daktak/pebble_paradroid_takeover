@@ -207,8 +207,14 @@ static void draw_hud(GContext *ctx, GameState *gs) {
         GRect(200 - 62, 16, 60, 14), GTextOverflowModeTrailingEllipsis, GTextAlignmentRight, NULL);
   }
 
-  // Center: countdown or phase indicator
-  graphics_context_set_text_color(ctx, GColorWhite);
+  // Center: countdown or phase indicator — color shows who's winning
+  GColor timer_col;
+  switch (gs->leader_color) {
+    case GELB: timer_col = GColorYellow; break;
+    case VIOLETT: timer_col = GColorVividViolet; break;
+    default: timer_col = GColorWhite; break;
+  }
+  graphics_context_set_text_color(ctx, timer_col);
   if (gs->phase == PHASE_COLOR_SEL) {
     int left = COLOR_COUNTDOWN - gs->countdown;
     snprintf(buf, sizeof(buf), "Color %d", left);
@@ -226,7 +232,13 @@ static void draw_hud(GContext *ctx, GameState *gs) {
     int max_count = (gs->phase == PHASE_COLOR_SEL) ? COLOR_COUNTDOWN : GAME_COUNTDOWN;
     int left = max_count - gs->countdown;
     int bar_w = 180 * left / max_count;
-    graphics_context_set_fill_color(ctx, gs->your_color == GELB ? GColorYellow : GColorVividViolet);
+    GColor bar_col;
+    switch (gs->leader_color) {
+      case GELB: bar_col = GColorYellow; break;
+      case VIOLETT: bar_col = GColorVividViolet; break;
+      default: bar_col = GColorDarkGray; break;
+    }
+    graphics_context_set_fill_color(ctx, bar_col);
     graphics_fill_rect(ctx, GRect(10, BOT_BAR_Y + 4, bar_w, 6), 2, GCornersAll);
     graphics_context_set_stroke_color(ctx, GColorDarkGray);
     graphics_context_set_stroke_width(ctx, 1);
