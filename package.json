@@ -1,6 +1,6 @@
 {
-  "name": "my-pebble-app",
-  "author": "Your Name",
+  "name": "Paradroid Takeover",
+  "author": "daktak",
   "version": "1.0.0",
   "keywords": [
     "pebble-app"
@@ -8,25 +8,22 @@
   "private": true,
   "dependencies": {},
   "pebble": {
-    "displayName": "My App",
-    "shortName": "My App",
-    "longName": "My Pebble App",
-    "uuid": "e1ac2ab4-140e-4f98-a78a-4872c50b738d",
+    "displayName": "Paradroid Takeover",
+    "shortName": "Takeover",
+    "longName": "Paradroid Takeover",
+    "uuid": "06cd5b53-79da-4061-bd65-1dc98f7876e6",
     "sdkVersion": "3",
     "enableMultiJS": false,
     "targetPlatforms": [
-      "basalt",
       "emery"
     ],
     "watchapp": {
-      "watchface": true
+      "watchface": false
     },
     "capabilities": [
       "configurable"
     ],
-    "messageKeys": [
-      "COLOR_INDEX"
-    ],
+    "messageKeys": [],
     "resources": {
       "media": [
         {
