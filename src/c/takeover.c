@@ -214,7 +214,8 @@ void animate_currents(playground_t activation) {
 
 void process_display_column(playground_t board, playground_t activation,
     int display_column[], int *leader) {
-  int flicker = (*leader == REMIS) ? 1 : 0;
+  static int flicker = 0;
+  flicker = !flicker;
   int conn_layer = NUM_LAYERS - 1;
   int elem_layer = NUM_LAYERS - 2;
   for (int r = 0; r < NUM_LINES; r++) {
@@ -315,7 +316,7 @@ void init_game(GameState *gs) {
   gs->highlight = 0;
   gs->won = 0;
 
-  memset(gs->display_column, 0, sizeof(gs->display_column));
+  for (int r = 0; r < NUM_LINES; r++) gs->display_column[r] = r % 2;
   memset(gs->board, 0, sizeof(gs->board));
   memset(gs->activation, 0, sizeof(gs->activation));
   memset(gs->capsule_countdown, -1, sizeof(gs->capsule_countdown));

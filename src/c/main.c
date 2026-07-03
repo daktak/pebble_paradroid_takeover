@@ -433,6 +433,7 @@ static void advance_show(void) {
     gs->capsule_cur_row[GELB] = 0;
     gs->capsule_cur_row[VIOLETT] = 0;
     memset(gs->capsule_countdown, -1, sizeof(gs->capsule_countdown));
+    for (int r = 0; r < NUM_LINES; r++) gs->display_column[r] = r % 2;
     if (s_timer) app_timer_cancel(s_timer);
     s_timer = NULL;
     load_droid_bitmap(gs->player.idx);
