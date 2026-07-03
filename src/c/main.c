@@ -19,6 +19,7 @@
 
 #define STORAGE_KEY_PLAYER 0
 #define STORAGE_KEY_ENEMY_IDX 1
+#define STORAGE_KEY_PLAYER_IDX 2
 
 static Window *s_win;
 static Layer *s_canvas;
@@ -140,7 +141,7 @@ static void draw_led_col(GContext *ctx, int x, int y, int display_column[], int 
 static void draw_board(GContext *ctx, GameState *gs) {
   int by = GRID_Y;
 
-  // Draw player grid (left side)
+  // Draw yellow grid (left side)
   for (int r = 0; r < NUM_LINES; r++) {
     for (int l = 0; l < NUM_LAYERS; l++) {
       int x = GRID_X + l * CELL_W;
@@ -154,10 +155,10 @@ static void draw_board(GContext *ctx, GameState *gs) {
   // Draw display column
   draw_led_col(ctx, COL_X, by, gs->display_column, gs->leader_color);
 
-  // Draw enemy grid (right side)
+  // Draw violet grid (right side) — layers reversed so L3 (connection) is nearest the column
   for (int r = 0; r < NUM_LINES; r++) {
     for (int l = 0; l < NUM_LAYERS; l++) {
-      int x = GRID2_X + l * CELL_W;
+      int x = GRID2_X + (NUM_LAYERS - 1 - l) * CELL_W;
       int y = by + r * CELL_H;
       int elem = gs->board[VIOLETT][l][r];
       int phase = gs->activation[VIOLETT][l][r];
@@ -353,12 +354,9 @@ static void timer_cb(void *data) {
     if (gs->tick % 3 == 0) gs->countdown++;
     layer_mark_dirty(s_canvas);
     if (gs->countdown >= COLOR_COUNTDOWN) {
-      gs->countdown = 0;
-      gs->phase = PHASE_PLAYING;
-      invent_playground(gs->board, gs->activation);
-      for (int r = 0; r < NUM_LINES; r++)
-        gs->display_column[r] = r % 2;
-    }
+        gs->countdown = 0;
+        gs->phase = PHASE_PLAYING;
+      }
     s_timer = app_timer_register(SHOW_TICK_MS, timer_cb, NULL);
   } else if (gs->phase == PHASE_RESULT) {
     gs->countdown++;
@@ -420,6 +418,7 @@ static void advance_show(void) {
     }
     // Persist
     persist_write_int(STORAGE_KEY_PLAYER, gs->player.num);
+    persist_write_int(STORAGE_KEY_PLAYER_IDX, gs->player.idx);
     persist_write_int(STORAGE_KEY_ENEMY_IDX, gs->enemy_idx);
     // Reset game state
     gs->your_color = GELB;
@@ -508,6 +507,9 @@ static void window_load(Window *w) {
   int saved = persist_read_int(STORAGE_KEY_PLAYER);
   if (saved > 0) {
     s_gs.player.num = saved;
+    s_gs.player.idx = persist_read_int(STORAGE_KEY_PLAYER_IDX);
+    if (s_gs.player.idx < 0 || s_gs.player.idx >= NUM_DROID_TYPES)
+      s_gs.player.idx = 0;
     s_gs.player.cls = droid_class(saved, 6);
     s_gs.player.caps = PLAYER_CAPSULES(s_gs.player.cls);
     s_gs.enemy_idx = persist_read_int(STORAGE_KEY_ENEMY_IDX);
