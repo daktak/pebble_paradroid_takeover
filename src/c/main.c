@@ -84,7 +84,7 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       graphics_draw_line(ctx, GPoint(x + 3, y + 2), GPoint(x + CELL_W - 3, y + CELL_H - 2));
       graphics_draw_line(ctx, GPoint(x + CELL_W - 3, y + 2), GPoint(x + 3, y + CELL_H - 2));
       break;
-    case VERZWEIGUNG_O:
+    case VERZWEIGUNG_U:
       graphics_fill_rect(ctx, GRect(x + 1, my, CELL_W - 2, 3), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(mx - 1, y + 1, 3, my - y), 0, GCornerNone);
       break;
@@ -92,7 +92,7 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       graphics_fill_rect(ctx, GRect(mx - 1, y + 1, 3, CELL_H - 2), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 2, 3), 0, GCornerNone);
       break;
-    case VERZWEIGUNG_U:
+    case VERZWEIGUNG_O:
       graphics_fill_rect(ctx, GRect(x + 1, my - 2, CELL_W - 2, 3), 0, GCornerNone);
       //graphics_context_set_fill_color(ctx, GColorBlue);
       //graphics_fill_rect(ctx, GRect(mx - 1, my + 2, 3, CELL_H - my - 2), 0, GCornerNone);
