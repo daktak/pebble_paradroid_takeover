@@ -236,8 +236,13 @@ static void draw_hud(GContext *ctx, GameState *gs) {
     int mid_y = 114;
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, GRect(mid_x - 50, mid_y - 16, 100, 32), 4, GCornersAll);
-    graphics_context_set_text_color(ctx, gs->won ? GColorYellow : GColorRed);
-    snprintf(buf, sizeof(buf), "%s", gs->won ? "CAPTURED" : "REJECTED");
+    const char *msg = gs->won == 2 ? "DEADLOCK"
+                    : gs->won      ? "CAPTURED"
+                    :                "REJECTED";
+    graphics_context_set_text_color(ctx, gs->won == 2 ? GColorWhite
+                                       : gs->won      ? GColorYellow
+                                       :                GColorRed);
+    snprintf(buf, sizeof(buf), "%s", msg);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
         GRect(mid_x - 46, mid_y - 10, 92, 20), GTextOverflowModeTrailingEllipsis,
         GTextAlignmentCenter, NULL);
@@ -348,7 +353,7 @@ static void timer_cb(void *data) {
           count_leds(gs->display_column, gs->your_color)) {
         gs->won = 0;
       } else {
-        gs->won = 1; // tie goes to player
+        gs->won = 2; // tie → deadlock → rematch
       }
       gs->phase = PHASE_RESULT;
       gs->countdown = 0;
@@ -394,7 +399,7 @@ static void advance_show(void) {
     s_timer = app_timer_register(SHOW_TICK_MS, timer_cb, NULL);
   } else if (gs->phase == PHASE_RESULT) {
     unload_droid_bitmap();
-    if (gs->won) {
+    if (gs->won == 1) {
       gs->player.num = gs->enemy.num;
       gs->player.idx = gs->enemy_idx;
       gs->player.cls = droid_class(gs->player.num, 6);
@@ -414,6 +419,28 @@ static void advance_show(void) {
       gs->enemy.cls = droid_class(gs->enemy.num, 7);
       gs->enemy.caps = ENEMY_CAPSULES(gs->enemy.cls);
       vibes_double_pulse();
+    } else if (gs->won == 2) {
+      // Deadlock — rematch same enemies, full reset
+      gs->your_color = GELB;
+      gs->opp_color = VIOLETT;
+      gs->capsule_row = 0;
+      gs->countdown = 0;
+      gs->leader_color = REMIS;
+      gs->result = 0;
+      gs->tick = 0;
+      gs->color_chosen = 0;
+      gs->capsule_cur_row[GELB] = 0;
+      gs->capsule_cur_row[VIOLETT] = 0;
+      gs->player.caps = PLAYER_CAPSULES(gs->player.cls);
+      gs->enemy.caps = ENEMY_CAPSULES(gs->enemy.cls);
+      memset(gs->capsule_countdown, -1, sizeof(gs->capsule_countdown));
+      for (int r = 0; r < NUM_LINES; r++) gs->display_column[r] = r % 2;
+      invent_playground(gs->board, gs->activation);
+      if (s_timer) app_timer_cancel(s_timer);
+      s_timer = app_timer_register(SHOW_TICK_MS, timer_cb, NULL);
+      gs->phase = PHASE_COLOR_SEL;
+      layer_mark_dirty(s_canvas);
+      return;
     } else {
       gs->player.num = 1;
       gs->player.idx = 0;
