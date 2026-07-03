@@ -15,8 +15,7 @@
 #define GRID_Y (TOP_BAR_H + 4)
 #define BOARD_H (NUM_LINES * CELL_H)
 #define BOT_BAR_Y (GRID_Y + BOARD_H + 2)
-#define PORTRAIT_W 28
-#define PORTRAIT_H 32
+
 
 #define STORAGE_KEY_PLAYER 0
 #define STORAGE_KEY_ENEMY_IDX 1
@@ -25,72 +24,36 @@ static Window *s_win;
 static Layer *s_canvas;
 static AppTimer *s_timer;
 static GameState s_gs;
+static GBitmap *s_droid_bitmap;
 
-// Droid silhouette shapes using filled rects
-static void draw_droid(GContext *ctx, int x, int y, int cls, GColor col) {
-  graphics_context_set_fill_color(ctx, col);
-  int cx = x + PORTRAIT_W / 2;
-  int by = y + PORTRAIT_H;
+static const uint32_t DROID_IDS[NUM_DROID_TYPES] = {
+  RESOURCE_ID_DROID_001, RESOURCE_ID_DROID_123, RESOURCE_ID_DROID_139,
+  RESOURCE_ID_DROID_247, RESOURCE_ID_DROID_249, RESOURCE_ID_DROID_296,
+  RESOURCE_ID_DROID_302, RESOURCE_ID_DROID_329, RESOURCE_ID_DROID_420,
+  RESOURCE_ID_DROID_476, RESOURCE_ID_DROID_493, RESOURCE_ID_DROID_516,
+  RESOURCE_ID_DROID_571, RESOURCE_ID_DROID_598, RESOURCE_ID_DROID_614,
+  RESOURCE_ID_DROID_615, RESOURCE_ID_DROID_629, RESOURCE_ID_DROID_711,
+  RESOURCE_ID_DROID_742, RESOURCE_ID_DROID_751, RESOURCE_ID_DROID_821,
+  RESOURCE_ID_DROID_834, RESOURCE_ID_DROID_883, RESOURCE_ID_DROID_999,
+};
 
-  switch (cls) {
-    case 0: // small oval device
-      graphics_fill_rect(ctx, GRect(cx - 4, by - 14, 8, 10), 2, GCornersAll);
-      graphics_fill_rect(ctx, GRect(cx - 2, by - 16, 4, 4), 2, GCornersAll);
-      break;
-    case 1: // box with antenna
-      graphics_fill_rect(ctx, GRect(cx - 6, by - 16, 12, 12), 1, GCornersAll);
-      graphics_fill_rect(ctx, GRect(cx - 1, by - 20, 2, 5), 0, GCornerNone);
-      break;
-    case 2: // box with fins
-      graphics_fill_rect(ctx, GRect(cx - 7, by - 18, 14, 14), 1, GCornersAll);
-      graphics_fill_rect(ctx, GRect(cx - 10, by - 15, 3, 6), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 7, by - 15, 3, 6), 0, GCornerNone);
-      break;
-    case 3: // angular with dome
-      graphics_fill_rect(ctx, GRect(cx - 8, by - 16, 16, 12), 1, GCornersAll);
-      graphics_fill_rect(ctx, GRect(cx - 5, by - 20, 10, 6), 2, GCornersAll);
-      break;
-    case 4: // boxy with treads
-      graphics_fill_rect(ctx, GRect(cx - 9, by - 14, 18, 10), 1, GCornersAll);
-      graphics_fill_rect(ctx, GRect(cx - 10, by - 4, 4, 4), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 6, by - 4, 4, 4), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx - 4, by - 16, 8, 4), 0, GCornerNone);
-      break;
-    case 5: // humanoid torso
-      graphics_fill_rect(ctx, GRect(cx - 3, by - 18, 6, 4), 0, GCornerNone); // head
-      graphics_fill_rect(ctx, GRect(cx - 6, by - 14, 12, 10), 1, GCornersAll); // body
-      graphics_fill_rect(ctx, GRect(cx - 9, by - 12, 3, 8), 0, GCornerNone); // l-arm
-      graphics_fill_rect(ctx, GRect(cx + 6, by - 12, 3, 8), 0, GCornerNone); // r-arm
-      graphics_fill_rect(ctx, GRect(cx - 4, by - 4, 3, 5), 0, GCornerNone); // l-leg
-      graphics_fill_rect(ctx, GRect(cx + 1, by - 4, 3, 5), 0, GCornerNone); // r-leg
-      break;
-    case 6: // humanoid with weapon
-      graphics_fill_rect(ctx, GRect(cx - 3, by - 18, 6, 4), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx - 7, by - 14, 14, 10), 1, GCornersAll);
-      graphics_fill_rect(ctx, GRect(cx - 10, by - 12, 3, 8), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 7, by - 13, 4, 6), 0, GCornerNone); // gun
-      graphics_fill_rect(ctx, GRect(cx + 9, by - 14, 2, 3), 0, GCornerNone); // barrel
-      graphics_fill_rect(ctx, GRect(cx - 4, by - 4, 3, 5), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 1, by - 4, 3, 5), 0, GCornerNone);
-      break;
-    default: // class 7+ - large battle droid
-      graphics_fill_rect(ctx, GRect(cx - 4, by - 20, 8, 5), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx - 10, by - 15, 20, 12), 1, GCornersAll);
-      graphics_fill_rect(ctx, GRect(cx - 13, by - 13, 3, 9), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 10, by - 13, 3, 9), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 13, by - 14, 2, 5), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx - 12, by - 7, 3, 4), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 9, by - 7, 3, 4), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx - 5, by - 3, 4, 4), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(cx + 1, by - 3, 4, 4), 0, GCornerNone);
-      break;
-  }
-}
 
 static GColor phase_color(GColor base, int phase) {
   if (phase == INACTIVE) return GColorDarkGray;
   // For active phases, use the base color (animation handled by brightness via draw style)
   return base;
+}
+
+static void load_droid_bitmap(int idx) {
+  if (s_droid_bitmap) gbitmap_destroy(s_droid_bitmap);
+  s_droid_bitmap = gbitmap_create_with_resource(DROID_IDS[idx]);
+}
+
+static void unload_droid_bitmap(void) {
+  if (s_droid_bitmap) {
+    gbitmap_destroy(s_droid_bitmap);
+    s_droid_bitmap = NULL;
+  }
 }
 
 static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phase) {
@@ -275,27 +238,33 @@ static void draw_hud(GContext *ctx, GameState *gs) {
 
 static void draw_phase_screen(GContext *ctx, GameState *gs) {
   if (gs->phase == PHASE_SHOW_PLAYER) {
+    char buf[16];
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
-    draw_droid(ctx, 86, 80, gs->player.cls, GColorYellow);
-    char buf[16];
+    if (s_droid_bitmap) {
+      graphics_draw_bitmap_in_rect(ctx, s_droid_bitmap, GRect(50, 40, 100, 136));
+    }
     snprintf(buf, sizeof(buf), "You: %s", droid_name_str(gs->player.num));
-    graphics_context_set_text_color(ctx, GColorWhite);
+    graphics_context_set_text_color(ctx, GColorYellow);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-        GRect(0, 130, 200, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, 10, 200, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+    graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, "Press SELECT", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(0, 156, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, 196, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   } else if (gs->phase == PHASE_SHOW_ENEMY) {
+    char buf[16];
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
-    draw_droid(ctx, 86, 80, gs->enemy.cls, GColorVividViolet);
-    char buf[16];
+    if (s_droid_bitmap) {
+      graphics_draw_bitmap_in_rect(ctx, s_droid_bitmap, GRect(50, 40, 100, 136));
+    }
     snprintf(buf, sizeof(buf), "Enemy: %s", droid_name_str(gs->enemy.num));
-    graphics_context_set_text_color(ctx, GColorWhite);
+    graphics_context_set_text_color(ctx, GColorVividViolet);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-        GRect(0, 130, 200, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, 10, 200, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+    graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, "Press SELECT", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(0, 156, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, 196, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   } else if (gs->phase == PHASE_COLOR_SEL) {
     // Draw game board in background
     draw_board(ctx, gs);
@@ -406,8 +375,10 @@ static void advance_show(void) {
   GameState *gs = &s_gs;
   if (gs->phase == PHASE_SHOW_PLAYER) {
     gs->phase = PHASE_SHOW_ENEMY;
+    load_droid_bitmap(gs->enemy_idx);
     layer_mark_dirty(s_canvas);
   } else if (gs->phase == PHASE_SHOW_ENEMY) {
+    unload_droid_bitmap();
     gs->phase = PHASE_COLOR_SEL;
     gs->countdown = 0;
     invent_playground(gs->board, gs->activation);
@@ -417,6 +388,7 @@ static void advance_show(void) {
     if (s_timer) app_timer_cancel(s_timer);
     s_timer = app_timer_register(SHOW_TICK_MS, timer_cb, NULL);
   } else if (gs->phase == PHASE_RESULT) {
+    unload_droid_bitmap();
     if (gs->won) {
       gs->player.num = gs->enemy.num;
       gs->player.idx = gs->enemy_idx;
@@ -463,6 +435,7 @@ static void advance_show(void) {
     memset(gs->capsule_countdown, -1, sizeof(gs->capsule_countdown));
     if (s_timer) app_timer_cancel(s_timer);
     s_timer = NULL;
+    load_droid_bitmap(gs->player.idx);
     gs->phase = PHASE_SHOW_PLAYER;
     layer_mark_dirty(s_canvas);
   }
@@ -543,10 +516,12 @@ static void window_load(Window *w) {
     s_gs.enemy.cls = droid_class(s_gs.enemy.num, 7);
     s_gs.enemy.caps = ENEMY_CAPSULES(s_gs.enemy.cls);
   }
+  load_droid_bitmap(s_gs.player.idx);
 }
 
 static void window_unload(Window *w) {
   if (s_timer) app_timer_cancel(s_timer);
+  unload_droid_bitmap();
   layer_destroy(s_canvas);
 }
 

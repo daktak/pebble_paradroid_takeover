@@ -30,6 +30,126 @@
           "type": "png",
           "name": "IMAGE_MENU_ICON",
           "file": "images/menu_icon.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_001",
+          "file": "images/001.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_123",
+          "file": "images/123.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_139",
+          "file": "images/139.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_247",
+          "file": "images/247.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_249",
+          "file": "images/249.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_296",
+          "file": "images/296.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_302",
+          "file": "images/302.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_329",
+          "file": "images/329.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_420",
+          "file": "images/420.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_476",
+          "file": "images/476.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_493",
+          "file": "images/493.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_516",
+          "file": "images/516.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_571",
+          "file": "images/571.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_598",
+          "file": "images/598.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_614",
+          "file": "images/614.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_615",
+          "file": "images/615.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_629",
+          "file": "images/629.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_711",
+          "file": "images/711.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_742",
+          "file": "images/742.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_751",
+          "file": "images/751.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_821",
+          "file": "images/821.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_834",
+          "file": "images/834.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_883",
+          "file": "images/883.png"
+        },
+        {
+          "type": "png",
+          "name": "DROID_999",
+          "file": "images/999.png"
         }
       ]
     }
