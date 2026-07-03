@@ -94,9 +94,7 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       break;
     case VERZWEIGUNG_O:
       graphics_fill_rect(ctx, GRect(x + 1, my - 2, CELL_W - 2, 3), 0, GCornerNone);
-      //graphics_context_set_fill_color(ctx, GColorBlue);
-      //graphics_fill_rect(ctx, GRect(mx - 1, my + 2, 3, CELL_H - my - 2), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(mx - 1, my + 2, 3, CELL_H / 2 - 2));
+      graphics_fill_rect(ctx, GRect(mx - 1, my + 2, 3, CELL_H / 2 - 2), 0, GCornerNone);
       break;
     case GATTER_O:
       graphics_fill_rect(ctx, GRect(x + 1, my, CELL_W - 8, 3), 0, GCornerNone);
