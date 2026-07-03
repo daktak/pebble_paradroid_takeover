@@ -151,7 +151,9 @@ static void draw_board(GContext *ctx, GameState *gs) {
       int y = by + r * CELL_H;
       int elem = gs->board[GELB][l][r];
       int phase = gs->activation[GELB][l][r];
-      draw_cell(ctx, x, y, elem, GELB, phase);
+      int col = elem == KABELENDE && phase == INACTIVE
+        && gs->board[GELB][2][r] == FARBTAUSCHER ? VIOLETT : GELB;
+      draw_cell(ctx, x, y, elem, col, phase);
     }
   }
 
@@ -165,7 +167,9 @@ static void draw_board(GContext *ctx, GameState *gs) {
       int y = by + r * CELL_H;
       int elem = gs->board[VIOLETT][l][r];
       int phase = gs->activation[VIOLETT][l][r];
-      draw_cell(ctx, x, y, elem, VIOLETT, phase);
+      int col = elem == KABELENDE && phase == INACTIVE
+        && gs->board[VIOLETT][2][r] == FARBTAUSCHER ? GELB : VIOLETT;
+      draw_cell(ctx, x, y, elem, col, phase);
     }
   }
 }
