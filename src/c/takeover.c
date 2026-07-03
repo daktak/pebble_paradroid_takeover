@@ -235,8 +235,6 @@ void process_display_column(playground_t board, playground_t activation,
         display_column[r] = GELB;
       else
         display_column[r] = flicker ? GELB : VIOLETT;
-    } else {
-      display_column[r] = INACTIVE;
     }
   }
 
