@@ -321,11 +321,12 @@ static void canvas_update(Layer *layer, GContext *ctx) {
     draw_board(ctx, &s_gs);
     draw_hud(ctx, &s_gs);
 
-    // Draw capsule selector on player side
+    // Draw capsule selector on the player's side
     int row = s_gs.capsule_row;
+    int sel_x = s_gs.your_color == GELB ? GRID_X : GRID2_X;
     graphics_context_set_stroke_color(ctx, GColorWhite);
     graphics_context_set_stroke_width(ctx, 2);
-    graphics_draw_rect(ctx, GRect(GRID_X - 1, GRID_Y + row * CELL_H - 1, CELL_W * NUM_LAYERS + 2, CELL_H + 2));
+    graphics_draw_rect(ctx, GRect(sel_x - 1, GRID_Y + row * CELL_H - 1, CELL_W * NUM_LAYERS + 2, CELL_H + 2));
   } else if (s_gs.phase == PHASE_RESULT) {
     draw_board(ctx, &s_gs);
     draw_hud(ctx, &s_gs);
@@ -385,8 +386,6 @@ static void timer_cb(void *data) {
     if (gs->countdown >= COLOR_COUNTDOWN) {
       gs->countdown = 0;
       gs->phase = PHASE_PLAYING;
-      // Generate the board
-      srand(time(NULL));
       invent_playground(gs->board, gs->activation);
       for (int r = 0; r < NUM_LINES; r++)
         gs->display_column[r] = r % 2;
@@ -411,7 +410,6 @@ static void advance_show(void) {
   } else if (gs->phase == PHASE_SHOW_ENEMY) {
     gs->phase = PHASE_COLOR_SEL;
     gs->countdown = 0;
-    srand(time(NULL));
     invent_playground(gs->board, gs->activation);
     for (int r = 0; r < NUM_LINES; r++)
       gs->display_column[r] = r % 2;

@@ -31,11 +31,11 @@ const int block_class[TO_BLOCKS] = {
 
 const int element_prob[TO_ELEMENTS] = {
   100,  // KABEL
-  2,    // KABELENDE
-  5,    // VERSTAERKER
-  5,    // FARBTAUSCHER
-  5,    // VERZWEIGUNG
-  5     // GATTER
+  3,    // KABELENDE
+  10,   // VERSTAERKER
+  6,    // FARBTAUSCHER
+  8,    // VERZWEIGUNG
+  7     // GATTER
 };
 
 static int rand_upto(int max) {
