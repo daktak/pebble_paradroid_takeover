@@ -80,14 +80,22 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       break;
     }
     case VERSTAERKER:
-      graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 8, 3), 0, GCornerNone);
-      graphics_fill_rect(ctx, GRect(x + CELL_W - 7, my - 4, 6, 8), 0, GCornerNone);
+      if (x < GRID2_X) {
+        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 8, 3), 0, GCornerNone);
+        graphics_fill_rect(ctx, GRect(x + CELL_W - 7, my - 4, 6, 8), 0, GCornerNone);
+      } else {
+        graphics_fill_rect(ctx, GRect(x + 8, my - 1, CELL_W - 8, 3), 0, GCornerNone);
+        graphics_fill_rect(ctx, GRect(x + 1, my - 4, 6, 8), 0, GCornerNone);
+      }
       break;
-    case FARBTAUSCHER:
-      graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 2, 3), 0, GCornerNone);
-      graphics_draw_line(ctx, GPoint(x + 3, y + 2), GPoint(x + CELL_W - 3, y + CELL_H - 2));
-      graphics_draw_line(ctx, GPoint(x + CELL_W - 3, y + 2), GPoint(x + 3, y + CELL_H - 2));
+    case FARBTAUSCHER: {
+      int right = x < GRID2_X;
+      graphics_fill_rect(ctx, GRect(right ? x + 1 : x + 8, my - 1, CELL_W - 8, 3), 0, GCornerNone);
+      GColor swap = color == GELB ? GColorVividViolet : GColorYellow;
+      graphics_context_set_fill_color(ctx, swap);
+      graphics_fill_rect(ctx, GRect(right ? x + CELL_W - 7 : x + 1, my - 4, 6, 8), 0, GCornerNone);
       break;
+    }
     case VERZWEIGUNG_U:
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 2, 3), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(mx - 1, y + 1, 3, my - y - 2), 0, GCornerNone);
