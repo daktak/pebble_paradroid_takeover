@@ -73,16 +73,10 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       break;
     case KABELENDE: {
       GColor c = color == GELB ? GColorYellow : GColorVividViolet;
+      int right = x < GRID2_X;
+      graphics_fill_rect(ctx, GRect(right ? x + 1 : x + 4, my - 1, CELL_W - 5, 3), 0, GCornerNone);
       graphics_context_set_fill_color(ctx, c);
-      if (color == GELB) {
-        // Yellow (left grid): cable end faces right (toward center column)
-        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 5, 3), 0, GCornerNone);
-        graphics_fill_rect(ctx, GRect(x + CELL_W - 5, my - 2, 4, 4), 0, GCornerNone);
-      } else {
-        // Violet (right grid): cable end faces left (toward center column)
-        graphics_fill_rect(ctx, GRect(x + 4, my - 1, CELL_W - 5, 3), 0, GCornerNone);
-        graphics_fill_rect(ctx, GRect(x + 1, my - 2, 4, 4), 0, GCornerNone);
-      }
+      graphics_fill_rect(ctx, GRect(right ? x + CELL_W - 5 : x + 1, my - 2, 4, 4), 0, GCornerNone);
       break;
     }
     case VERSTAERKER:
