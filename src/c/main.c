@@ -79,15 +79,19 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       graphics_fill_rect(ctx, GRect(right ? x + CELL_W - 5 : x + 1, my - 2, 4, 4), 0, GCornerNone);
       break;
     }
-    case VERSTAERKER:
+    case VERSTAERKER: {
+      GColor c = color == GELB ? GColorYellow : GColorVividViolet;
       if (x < GRID2_X) {
         graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 8, 3), 0, GCornerNone);
+        graphics_context_set_fill_color(ctx, c);
         graphics_fill_rect(ctx, GRect(x + CELL_W - 7, my - 4, 6, 8), 0, GCornerNone);
       } else {
         graphics_fill_rect(ctx, GRect(x + 8, my - 1, CELL_W - 8, 3), 0, GCornerNone);
+        graphics_context_set_fill_color(ctx, c);
         graphics_fill_rect(ctx, GRect(x + 1, my - 4, 6, 8), 0, GCornerNone);
       }
       break;
+    }
     case FARBTAUSCHER: {
       int right = x < GRID2_X;
       graphics_fill_rect(ctx, GRect(right ? x + 1 : x + 8, my - 1, CELL_W - 8, 3), 0, GCornerNone);
