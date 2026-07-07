@@ -15,13 +15,13 @@
     "sdkVersion": "3",
     "enableMultiJS": false,
     "targetPlatforms": [
+      "basalt",
       "emery"
     ],
     "watchapp": {
       "watchface": false
     },
-    "capabilities": [
-    ],
+    "capabilities": [],
     "messageKeys": [],
     "resources": {
       "media": [

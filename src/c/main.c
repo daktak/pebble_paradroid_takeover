@@ -1,18 +1,90 @@
 #include <locale.h>
 #include "takeover.h"
 
-// Layout constants for emery (200×228)
+// Layout constants — platform aware
+#if PBL_DISPLAY_WIDTH > 180
+// Emery (200×228)
 #define CELL_W 22
 #define CELL_H 20
+#define DROID_W 100
+#define DROID_H 136
+#define DROID_X 50
+#define DROID_Y 40
+#define PRESS_SEL_Y 196
+#define WIN_MSG_MID_Y 114
+#define HS_TITLE_Y 8
+#define HS_HEADER_Y 36
+#define HS_SEP_Y 53
+#define HS_ROW_Y 58
+#define HS_ROW_H 18
+#define HS_LATEST_OFF 4
+#define COLOR_SEL_OX 40
+#define COLOR_SEL_OY 50
+#define COLOR_SEL_W 120
+#define COLOR_SEL_H 60
+#define COLOR_SEL_TX 44
+#define COLOR_SEL_TY 54
+#define COLOR_SEL_TW 112
+#define HS_COL1_X 20
+#define HS_COL1_W 20
+#define HS_COL2_X 50
+#define HS_COL2_W 50
+#define HS_COL3_X 110
+#define HS_COL3_W 70
+#define HS_LATEST_X 20
+#define HS_LATEST_W 60
+#define HS_LATEST_DROID_X 80
+#define HS_LATEST_DROID_W 40
+#define HS_LATEST_DATE_X 130
+#define HS_LATEST_DATE_W 50
+#else
+// Basalt (144×168)
+#define CELL_W 15
+#define CELL_H 14
+#define DROID_W 72
+#define DROID_H 98
+#define DROID_X 36
+#define DROID_Y 35
+#define PRESS_SEL_Y 148
+#define WIN_MSG_MID_Y 74
+#define HS_TITLE_Y 6
+#define HS_HEADER_Y 30
+#define HS_SEP_Y 46
+#define HS_ROW_Y 50
+#define HS_ROW_H 15
+#define HS_LATEST_OFF 2
+#define COLOR_SEL_OX 22
+#define COLOR_SEL_OY 40
+#define COLOR_SEL_W 100
+#define COLOR_SEL_H 60
+#define COLOR_SEL_TX 26
+#define COLOR_SEL_TY 44
+#define COLOR_SEL_TW 92
+#define HS_COL1_X 14
+#define HS_COL1_W 18
+#define HS_COL2_X 34
+#define HS_COL2_W 36
+#define HS_COL3_X 72
+#define HS_COL3_W 58
+#define HS_LATEST_X 14
+#define HS_LATEST_W 44
+#define HS_LATEST_DROID_X 60
+#define HS_LATEST_DROID_W 32
+#define HS_LATEST_DATE_X 94
+#define HS_LATEST_DATE_W 40
+#endif
+#define TOP_BAR_H 32
+
+#define SCREEN_W PBL_DISPLAY_WIDTH
+#define SCREEN_H PBL_DISPLAY_HEIGHT
 #define GRID_L 4
 #define COL_W 10
 #define GAP 5
 #define GRID_W (GRID_L * CELL_W)
 #define TOTAL_W (GRID_W * 2 + GAP * 2 + COL_W)
-#define GRID_X ((200 - TOTAL_W) / 2)
+#define GRID_X ((SCREEN_W - TOTAL_W) / 2)
 #define COL_X (GRID_X + GRID_W + GAP)
 #define GRID2_X (COL_X + COL_W + GAP)
-#define TOP_BAR_H 32
 #define GRID_Y (TOP_BAR_H + 4)
 #define BOARD_H (NUM_LINES * CELL_H)
 #define BOT_BAR_Y (GRID_Y + BOARD_H + 2)
@@ -166,7 +238,7 @@ static void draw_led_col(GContext *ctx, int x, int y, int display_column[], int 
 
 static void draw_board(GContext *ctx, GameState *gs) {
   graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
+  graphics_fill_rect(ctx, GRect(0, 0, SCREEN_W, SCREEN_H), 0, GCornerNone);
 
   int by = GRID_Y;
 
@@ -231,13 +303,13 @@ static void draw_hud(GContext *ctx, GameState *gs) {
   snprintf(buf, sizeof(buf), "%s", droid_name_str(gs->enemy.num));
   graphics_context_set_text_color(ctx, GColorVividViolet);
   graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-      GRect(200 - 62, 2, 60, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentRight, NULL);
+      GRect(SCREEN_W - 62, 2, 60, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentRight, NULL);
 
   // Enemy capsules
   if (gs->phase == PHASE_PLAYING) {
     snprintf(buf, sizeof(buf), "%d", gs->enemy.caps);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(200 - 62, 16, 60, 14), GTextOverflowModeTrailingEllipsis, GTextAlignmentRight, NULL);
+        GRect(SCREEN_W - 62, 16, 60, 14), GTextOverflowModeTrailingEllipsis, GTextAlignmentRight, NULL);
   }
 
   // Center: countdown or phase indicator — color shows who's winning
@@ -252,19 +324,19 @@ static void draw_hud(GContext *ctx, GameState *gs) {
     int left = COLOR_COUNTDOWN - gs->countdown;
     snprintf(buf, sizeof(buf), "Color %d", left);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(60, 8, 80, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect((SCREEN_W - 80) / 2, 8, 80, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   } else if (gs->phase == PHASE_PLAYING) {
     int left = GAME_COUNTDOWN - gs->countdown;
     snprintf(buf, sizeof(buf), "%d", left);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-        GRect(60, 4, 80, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect((SCREEN_W - 80) / 2, 4, 80, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   }
 
   // Bottom: timer bar
   if (gs->phase == PHASE_PLAYING || gs->phase == PHASE_COLOR_SEL) {
     int max_count = (gs->phase == PHASE_COLOR_SEL) ? COLOR_COUNTDOWN : GAME_COUNTDOWN;
     int left = max_count - gs->countdown;
-    int bar_w = 180 * left / max_count;
+    int bar_w = (SCREEN_W - 20) * left / max_count;
     GColor bar_col;
     switch (gs->leader_color) {
       case GELB: bar_col = GColorYellow; break;
@@ -275,13 +347,13 @@ static void draw_hud(GContext *ctx, GameState *gs) {
     graphics_fill_rect(ctx, GRect(10, BOT_BAR_Y + 4, bar_w, 6), 2, GCornersAll);
     graphics_context_set_stroke_color(ctx, GColorDarkGray);
     graphics_context_set_stroke_width(ctx, 1);
-    graphics_draw_rect(ctx, GRect(10, BOT_BAR_Y + 4, 180, 6));
+    graphics_draw_rect(ctx, GRect(10, BOT_BAR_Y + 4, SCREEN_W - 20, 6));
   }
 
   // Result text
   if (gs->phase == PHASE_RESULT) {
-    int mid_x = 100;
-    int mid_y = 114;
+    int mid_x = SCREEN_W / 2;
+    int mid_y = WIN_MSG_MID_Y;
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, GRect(mid_x - 50, mid_y - 16, 100, 32), 4, GCornersAll);
     const char *msg = gs->won == 2 ? "DEADLOCK"
@@ -301,69 +373,69 @@ static void draw_phase_screen(GContext *ctx, GameState *gs) {
   if (gs->phase == PHASE_SHOW_PLAYER) {
     char buf[16];
     graphics_context_set_fill_color(ctx, GColorBlack);
-    graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
+    graphics_fill_rect(ctx, GRect(0, 0, SCREEN_W, SCREEN_H), 0, GCornerNone);
     if (s_droid_bitmap) {
-      graphics_draw_bitmap_in_rect(ctx, s_droid_bitmap, GRect(50, 40, 100, 136));
+      graphics_draw_bitmap_in_rect(ctx, s_droid_bitmap, GRect(DROID_X, DROID_Y, DROID_W, DROID_H));
     }
     snprintf(buf, sizeof(buf), "You: %s", droid_name_str(gs->player.num));
     graphics_context_set_text_color(ctx, GColorYellow);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-        GRect(0, 10, 200, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, 10, SCREEN_W, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, "Press SELECT", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(0, 196, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, PRESS_SEL_Y, SCREEN_W, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   } else if (gs->phase == PHASE_SHOW_ENEMY) {
     char buf[16];
     graphics_context_set_fill_color(ctx, GColorBlack);
-    graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
+    graphics_fill_rect(ctx, GRect(0, 0, SCREEN_W, SCREEN_H), 0, GCornerNone);
     if (s_droid_bitmap) {
-      graphics_draw_bitmap_in_rect(ctx, s_droid_bitmap, GRect(50, 40, 100, 136));
+      graphics_draw_bitmap_in_rect(ctx, s_droid_bitmap, GRect(DROID_X, DROID_Y, DROID_W, DROID_H));
     }
     snprintf(buf, sizeof(buf), "Enemy: %s", droid_name_str(gs->enemy.num));
     graphics_context_set_text_color(ctx, GColorVividViolet);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-        GRect(0, 10, 200, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, 10, SCREEN_W, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, "Press SELECT", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(0, 196, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(0, PRESS_SEL_Y, SCREEN_W, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   } else if (gs->phase == PHASE_COLOR_SEL) {
     // Draw game board in background
     draw_board(ctx, gs);
     // Overlay
     graphics_context_set_fill_color(ctx, GColorBlack);
-    graphics_fill_rect(ctx, GRect(40, 50, 120, 60), 4, GCornersAll);
+    graphics_fill_rect(ctx, GRect(COLOR_SEL_OX, COLOR_SEL_OY, COLOR_SEL_W, COLOR_SEL_H), 4, GCornersAll);
     char buf[32];
     snprintf(buf, sizeof(buf), "Choose color");
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(44, 54, 112, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(COLOR_SEL_TX, COLOR_SEL_TY, COLOR_SEL_TW, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
     snprintf(buf, sizeof(buf), "%s",
         gs->your_color == GELB ? "YELLOW" : "VIOLET");
     graphics_context_set_text_color(ctx,
         gs->your_color == GELB ? GColorYellow : GColorVividViolet);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-        GRect(44, 74, 112, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+        GRect(COLOR_SEL_TX, COLOR_SEL_TY + 20, COLOR_SEL_TW, 24), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   }
 }
 
 static void draw_high_scores(GContext *ctx, HighScoreData *hsd) {
   graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
+  graphics_fill_rect(ctx, GRect(0, 0, SCREEN_W, SCREEN_H), 0, GCornerNone);
 
   char buf[32], date_buf[16];
 
   graphics_context_set_text_color(ctx, GColorWhite);
   graphics_draw_text(ctx, "HIGH SCORES", fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-      GRect(0, 8, 200, 22), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+      GRect(0, HS_TITLE_Y, SCREEN_W, 22), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 
   graphics_context_set_text_color(ctx, GColorLightGray);
   graphics_draw_text(ctx, "#  DROID  DATE", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-      GRect(20, 36, 160, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+      GRect(HS_COL1_X, HS_HEADER_Y, SCREEN_W - 2 * HS_COL1_X, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 
   graphics_context_set_stroke_color(ctx, GColorDarkGray);
-  graphics_draw_line(ctx, GPoint(20, 53), GPoint(180, 53));
+  graphics_draw_line(ctx, GPoint(HS_COL1_X, HS_SEP_Y), GPoint(SCREEN_W - HS_COL1_X, HS_SEP_Y));
 
-  int y = 58;
+  int y = HS_ROW_Y;
   for (uint32_t i = 0; i < hsd->count; i++) {
     struct tm *lt = localtime(&hsd->entries[i].timestamp);
     if (lt) strftime(date_buf, sizeof(date_buf), "%x", lt);
@@ -377,16 +449,16 @@ static void draw_high_scores(GContext *ctx, HighScoreData *hsd) {
 
     snprintf(buf, sizeof(buf), "%lu", (unsigned long)(i + 1));
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(20, y, 20, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+        GRect(HS_COL1_X, y, HS_COL1_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
     snprintf(buf, sizeof(buf), "%03lu", (unsigned long)hsd->entries[i].droid_num);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(50, y, 50, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+        GRect(HS_COL2_X, y, HS_COL2_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
     graphics_draw_text(ctx, date_buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(110, y, 70, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+        GRect(HS_COL3_X, y, HS_COL3_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
-    y += 18;
+    y += HS_ROW_H;
   }
 
   if (!hsd->last_made_it && hsd->last_droid > 0) {
@@ -394,23 +466,23 @@ static void draw_high_scores(GContext *ctx, HighScoreData *hsd) {
     if (lt) strftime(date_buf, sizeof(date_buf), "%x", lt);
     else snprintf(date_buf, sizeof(date_buf), "???");
 
-    y += 4;
+    y += HS_LATEST_OFF;
     graphics_context_set_text_color(ctx, GColorLightGray);
     graphics_draw_text(ctx, "Latest:", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(20, y, 60, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+        GRect(HS_LATEST_X, y, HS_LATEST_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
     snprintf(buf, sizeof(buf), "%03lu", (unsigned long)hsd->last_droid);
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(80, y, 40, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+        GRect(HS_LATEST_DROID_X, y, HS_LATEST_DROID_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
     graphics_draw_text(ctx, date_buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
-        GRect(130, y, 50, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+        GRect(HS_LATEST_DATE_X, y, HS_LATEST_DATE_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
   }
 
   graphics_context_set_text_color(ctx, GColorWhite);
   graphics_draw_text(ctx, "Press SELECT", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-      GRect(0, 196, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+      GRect(0, PRESS_SEL_Y, SCREEN_W, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 }
 
 static void canvas_update(Layer *layer, GContext *ctx) {
