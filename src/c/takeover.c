@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
+#include <locale.h>
 #include "takeover.h"
 
 const int s_droid_types[NUM_DROID_TYPES] = {
@@ -287,6 +289,43 @@ int count_leds(int display_column[], int color) {
   for (int r = 0; r < NUM_LINES; r++)
     if (display_column[r] == color) n++;
   return n;
+}
+
+void highscores_init(HighScoreData *hsd) {
+  int r = persist_read_data(STORAGE_KEY_HIGH_SCORES, hsd, sizeof(HighScoreData));
+  if (r < 0) {
+    memset(hsd, 0, sizeof(HighScoreData));
+  } else {
+    if (hsd->count > MAX_HIGH_SCORES) hsd->count = 0;
+    if (hsd->last_made_it > 1) hsd->last_made_it = 0;
+  }
+}
+
+uint32_t highscores_add(HighScoreData *hsd, uint32_t droid_num, time_t timestamp) {
+  hsd->last_droid = droid_num;
+  hsd->last_timestamp = timestamp;
+  hsd->last_made_it = 0;
+
+  int pos = 0;
+  while (pos < (int)hsd->count && hsd->entries[pos].droid_num > droid_num) pos++;
+
+  if (pos < MAX_HIGH_SCORES) {
+    int end = hsd->count;
+    if (end > MAX_HIGH_SCORES - 1) end = MAX_HIGH_SCORES - 1;
+    for (int i = end; i > pos; i--)
+      hsd->entries[i] = hsd->entries[i - 1];
+
+    hsd->entries[pos].droid_num = droid_num;
+    hsd->entries[pos].timestamp = timestamp;
+    if (hsd->count < MAX_HIGH_SCORES) hsd->count++;
+    hsd->last_made_it = 1;
+  }
+
+  return hsd->last_made_it;
+}
+
+void highscores_save(HighScoreData *hsd) {
+  persist_write_data(STORAGE_KEY_HIGH_SCORES, hsd, sizeof(HighScoreData));
 }
 
 void init_game(GameState *gs) {

@@ -2,6 +2,7 @@
 #define TAKEOVER_H
 
 #include <pebble.h>
+#include <time.h>
 
 #define NUM_LAYERS 4
 #define NUM_LINES 8
@@ -60,7 +61,8 @@ enum game_phase {
   PHASE_SHOW_ENEMY,
   PHASE_COLOR_SEL,
   PHASE_PLAYING,
-  PHASE_RESULT
+  PHASE_RESULT,
+  PHASE_HIGH_SCORES
 };
 
 #define CONNECTOR 0
@@ -81,6 +83,22 @@ typedef struct {
   int cls;
   int caps;
 } Droid;
+
+#define MAX_HIGH_SCORES 5
+#define STORAGE_KEY_HIGH_SCORES 3
+
+typedef struct {
+  uint32_t droid_num;
+  time_t timestamp;
+} HighScoreEntry;
+
+typedef struct {
+  uint32_t count;
+  uint32_t last_droid;
+  time_t last_timestamp;
+  uint32_t last_made_it;
+  HighScoreEntry entries[MAX_HIGH_SCORES];
+} HighScoreData;
 
 typedef struct {
   int phase;
@@ -118,5 +136,8 @@ int count_leds(int display_column[], int color);
 void init_game(GameState *gs);
 const char *droid_name_str(int num);
 void format_droid_name(char *buf, int len, int num);
+void highscores_init(HighScoreData *hsd);
+uint32_t highscores_add(HighScoreData *hsd, uint32_t droid_num, time_t timestamp);
+void highscores_save(HighScoreData *hsd);
 
 #endif

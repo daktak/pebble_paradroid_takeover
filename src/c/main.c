@@ -1,3 +1,4 @@
+#include <locale.h>
 #include "takeover.h"
 
 // Layout constants for emery (200×228)
@@ -26,6 +27,7 @@ static Layer *s_canvas;
 static AppTimer *s_timer;
 static GameState s_gs;
 static GBitmap *s_droid_bitmap;
+static HighScoreData s_hsd;
 
 static const uint32_t DROID_IDS[NUM_DROID_TYPES] = {
   RESOURCE_ID_DROID_001, RESOURCE_ID_DROID_123, RESOURCE_ID_DROID_139,
@@ -334,6 +336,73 @@ static void draw_phase_screen(GContext *ctx, GameState *gs) {
   }
 }
 
+static void draw_high_scores(GContext *ctx, HighScoreData *hsd) {
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_rect(ctx, GRect(0, 0, 200, 228), 0, GCornerNone);
+
+  char buf[32], date_buf[16];
+
+  graphics_context_set_text_color(ctx, GColorWhite);
+  graphics_draw_text(ctx, "HIGH SCORES", fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+      GRect(0, 8, 200, 22), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+
+  graphics_context_set_text_color(ctx, GColorLightGray);
+  graphics_draw_text(ctx, "#  DROID  DATE", fonts_get_system_font(FONT_KEY_GOTHIC_14),
+      GRect(20, 36, 160, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+
+  graphics_context_set_stroke_color(ctx, GColorDarkGray);
+  graphics_draw_line(ctx, GPoint(20, 53), GPoint(180, 53));
+
+  int y = 58;
+  for (uint32_t i = 0; i < hsd->count; i++) {
+    struct tm *lt = localtime(&hsd->entries[i].timestamp);
+    if (lt) strftime(date_buf, sizeof(date_buf), "%x", lt);
+    else snprintf(date_buf, sizeof(date_buf), "???");
+
+    int is_new = hsd->last_made_it
+      && hsd->entries[i].droid_num == hsd->last_droid
+      && hsd->entries[i].timestamp == hsd->last_timestamp;
+
+    graphics_context_set_text_color(ctx, is_new ? GColorYellow : GColorWhite);
+
+    snprintf(buf, sizeof(buf), "%d", i + 1);
+    graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+        GRect(20, y, 20, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+
+    snprintf(buf, sizeof(buf), "%03d", hsd->entries[i].droid_num);
+    graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+        GRect(50, y, 50, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+
+    graphics_draw_text(ctx, date_buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+        GRect(110, y, 70, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+
+    y += 18;
+  }
+
+  if (!hsd->last_made_it && hsd->last_droid > 0) {
+    struct tm *lt = localtime(&hsd->last_timestamp);
+    if (lt) strftime(date_buf, sizeof(date_buf), "%x", lt);
+    else snprintf(date_buf, sizeof(date_buf), "???");
+
+    y += 4;
+    graphics_context_set_text_color(ctx, GColorLightGray);
+    graphics_draw_text(ctx, "Latest:", fonts_get_system_font(FONT_KEY_GOTHIC_14),
+        GRect(20, y, 60, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+
+    snprintf(buf, sizeof(buf), "%03d", hsd->last_droid);
+    graphics_context_set_text_color(ctx, GColorWhite);
+    graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+        GRect(80, y, 40, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+
+    graphics_draw_text(ctx, date_buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+        GRect(130, y, 50, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+  }
+
+  graphics_context_set_text_color(ctx, GColorWhite);
+  graphics_draw_text(ctx, "Press SELECT", fonts_get_system_font(FONT_KEY_GOTHIC_14),
+      GRect(0, 196, 200, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+}
+
 static void canvas_update(Layer *layer, GContext *ctx) {
   if (s_gs.phase == PHASE_PLAYING) {
     draw_board(ctx, &s_gs);
@@ -348,6 +417,8 @@ static void canvas_update(Layer *layer, GContext *ctx) {
   } else if (s_gs.phase == PHASE_RESULT) {
     draw_board(ctx, &s_gs);
     draw_hud(ctx, &s_gs);
+  } else if (s_gs.phase == PHASE_HIGH_SCORES) {
+    draw_high_scores(ctx, &s_hsd);
   } else {
     draw_phase_screen(ctx, &s_gs);
     draw_hud(ctx, &s_gs);
@@ -434,6 +505,7 @@ static void advance_show(void) {
     if (s_timer) app_timer_cancel(s_timer);
     s_timer = app_timer_register(SHOW_TICK_MS, timer_cb, NULL);
   } else if (gs->phase == PHASE_RESULT) {
+    int show_high_scores = 0;
     unload_droid_bitmap();
     if (gs->won == 1) {
       gs->player.num = gs->enemy.num;
@@ -442,9 +514,9 @@ static void advance_show(void) {
       gs->player.caps = PLAYER_CAPSULES(gs->player.cls);
       gs->enemy_idx++;
       if (gs->enemy_idx >= NUM_DROID_TYPES) {
-        gs->enemy_idx = NUM_DROID_TYPES - 1;
-        // You win! All droids captured
-        gs->phase = PHASE_SHOW_PLAYER;
+        highscores_add(&s_hsd, gs->player.num, time(NULL));
+        highscores_save(&s_hsd);
+        show_high_scores = 1;
         gs->player.num = 1;
         gs->player.idx = 0;
         gs->player.cls = droid_class(1, 6);
@@ -478,6 +550,9 @@ static void advance_show(void) {
       layer_mark_dirty(s_canvas);
       return;
     } else {
+      highscores_add(&s_hsd, gs->player.num, time(NULL));
+      highscores_save(&s_hsd);
+      show_high_scores = 1;
       gs->player.num = 1;
       gs->player.idx = 0;
       gs->player.cls = droid_class(1, 6);
@@ -507,6 +582,9 @@ static void advance_show(void) {
     if (s_timer) app_timer_cancel(s_timer);
     s_timer = NULL;
     load_droid_bitmap(gs->player.idx);
+    gs->phase = show_high_scores ? PHASE_HIGH_SCORES : PHASE_SHOW_PLAYER;
+    layer_mark_dirty(s_canvas);
+  } else if (gs->phase == PHASE_HIGH_SCORES) {
     gs->phase = PHASE_SHOW_PLAYER;
     layer_mark_dirty(s_canvas);
   }
@@ -541,7 +619,7 @@ static void down_handler(ClickRecognizerRef recognizer, void *ctx) {
 static void select_handler(ClickRecognizerRef recognizer, void *ctx) {
   GameState *gs = &s_gs;
   if (gs->phase == PHASE_SHOW_PLAYER || gs->phase == PHASE_SHOW_ENEMY
-      || gs->phase == PHASE_RESULT) {
+      || gs->phase == PHASE_RESULT || gs->phase == PHASE_HIGH_SCORES) {
     advance_show();
   } else if (gs->phase == PHASE_PLAYING) {
     int row = gs->capsule_row;
@@ -600,7 +678,9 @@ static void window_unload(Window *w) {
 
 static void init(void) {
   srand(time(NULL));
+  setlocale(LC_ALL, "");
   init_game(&s_gs);
+  highscores_init(&s_hsd);
 
   s_win = window_create();
   window_set_background_color(s_win, GColorBlack);
