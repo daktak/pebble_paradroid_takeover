@@ -28,7 +28,7 @@ jobs:
           echo "Version set to $VERSION"
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build Pebble Docker image
         run: docker build --platform linux/amd64 -t pebble-builder .
@@ -45,7 +45,7 @@ jobs:
             pebble-builder
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pebble-app
           path: build/*.pbw
