@@ -74,11 +74,17 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 2, 3), 0, GCornerNone);
       break;
     case KABELENDE: {
-      GColor c = color == GELB ? GColorYellow : GColorVividViolet;
-      int right = x < GRID2_X;
-      //graphics_fill_rect(ctx, GRect(right ? x + 1 : x + 4, my - 1, CELL_W - 5, 3), 0, GCornerNone);
+      GColor c = phase == INACTIVE ? GColorDarkGray
+        : (color == GELB ? GColorYellow : GColorVividViolet);
       graphics_context_set_fill_color(ctx, c);
-      graphics_fill_rect(ctx, GRect(right ? x + CELL_W - 5 : x + 1, my - 2, 4, 4), 0, GCornerNone);
+      graphics_context_set_stroke_width(ctx, 1);
+      // Line from outer edge to center
+      if (x < GRID2_X)
+        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
+      else
+        graphics_fill_rect(ctx, GRect(mx + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
+      // Square at center marking cable end
+      graphics_fill_rect(ctx, GRect(mx - 3, my - 3, 6, 6), 0, GCornerNone);
       break;
     }
     case VERSTAERKER: {
