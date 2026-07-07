@@ -365,11 +365,11 @@ static void draw_high_scores(GContext *ctx, HighScoreData *hsd) {
 
     graphics_context_set_text_color(ctx, is_new ? GColorYellow : GColorWhite);
 
-    snprintf(buf, sizeof(buf), "%d", i + 1);
+    snprintf(buf, sizeof(buf), "%lu", (unsigned long)(i + 1));
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
         GRect(20, y, 20, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
-    snprintf(buf, sizeof(buf), "%03d", hsd->entries[i].droid_num);
+    snprintf(buf, sizeof(buf), "%03lu", (unsigned long)hsd->entries[i].droid_num);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
         GRect(50, y, 50, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
@@ -389,7 +389,7 @@ static void draw_high_scores(GContext *ctx, HighScoreData *hsd) {
     graphics_draw_text(ctx, "Latest:", fonts_get_system_font(FONT_KEY_GOTHIC_14),
         GRect(20, y, 60, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
-    snprintf(buf, sizeof(buf), "%03d", hsd->last_droid);
+    snprintf(buf, sizeof(buf), "%03lu", (unsigned long)hsd->last_droid);
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
         GRect(80, y, 40, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
