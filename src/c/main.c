@@ -2,7 +2,7 @@
 #include "takeover.h"
 
 // Layout constants for emery (200×228)
-#define CELL_W 16
+#define CELL_W 22
 #define CELL_H 20
 #define GRID_L 4
 #define COL_W 10
