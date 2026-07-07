@@ -183,7 +183,7 @@ static void draw_board(GContext *ctx, GameState *gs) {
       if (elem == KABEL && l == 3
           && gs->board[GELB][2][r] == FARBTAUSCHER
           && gs->activation[GELB][2][r] >= ACTIVE1) col = VIOLETT;
-      int sel = (gs->your_color == GELB) && (l == 0) && (r == gs->capsule_row);
+      int sel = (gs->your_color == GELB) && (r == gs->capsule_row);
       draw_cell(ctx, x, y, elem, col, phase, sel);
     }
   }
@@ -204,7 +204,7 @@ static void draw_board(GContext *ctx, GameState *gs) {
       if (elem == KABEL && l == 3
           && gs->board[VIOLETT][2][r] == FARBTAUSCHER
           && gs->activation[VIOLETT][2][r] >= ACTIVE1) col = GELB;
-      int sel = (gs->your_color == VIOLETT) && (l == 0) && (r == gs->capsule_row);
+      int sel = (gs->your_color == VIOLETT) && (r == gs->capsule_row);
       draw_cell(ctx, x, y, elem, col, phase, sel);
     }
   }
