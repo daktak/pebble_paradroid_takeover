@@ -59,7 +59,7 @@ static void unload_droid_bitmap(void) {
   }
 }
 
-static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phase) {
+static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phase, int selected) {
   GColor col = color == GELB ? GColorYellow : GColorVividViolet;
   col = phase_color(col, phase);
   graphics_context_set_stroke_color(ctx, col);
@@ -74,8 +74,10 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W - 2, 3), 0, GCornerNone);
       break;
     case KABELENDE: {
-      GColor c = phase == INACTIVE ? GColorDarkGray
-        : (color == GELB ? GColorYellow : GColorVividViolet);
+      GColor c = selected
+        ? (color == GELB ? GColorYellow : GColorVividViolet)
+        : (phase == INACTIVE ? GColorDarkGray
+          : (color == GELB ? GColorYellow : GColorVividViolet));
       graphics_context_set_fill_color(ctx, c);
       graphics_context_set_stroke_width(ctx, 1);
       // Line from outer edge to center
@@ -136,7 +138,7 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
   }
 }
 
-static void draw_cell(GContext *ctx, int x, int y, int elem, int color, int phase) {
+static void draw_cell(GContext *ctx, int x, int y, int elem, int color, int phase, int selected) {
   // Cell background
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_rect(ctx, GRect(x, y, CELL_W, CELL_H), 0, GCornerNone);
@@ -145,7 +147,7 @@ static void draw_cell(GContext *ctx, int x, int y, int elem, int color, int phas
   graphics_context_set_stroke_width(ctx, 1);
   graphics_draw_line(ctx, GPoint(x + CELL_W - 1, y), GPoint(x + CELL_W - 1, y + CELL_H - 1));
   // Tile content
-  draw_tile(ctx, x, y, elem, color, phase);
+  draw_tile(ctx, x, y, elem, color, phase, selected);
 }
 
 static void draw_led_col(GContext *ctx, int x, int y, int display_column[], int leader) {
@@ -181,7 +183,8 @@ static void draw_board(GContext *ctx, GameState *gs) {
       if (elem == KABEL && l == 3
           && gs->board[GELB][2][r] == FARBTAUSCHER
           && gs->activation[GELB][2][r] >= ACTIVE1) col = VIOLETT;
-      draw_cell(ctx, x, y, elem, col, phase);
+      int sel = (gs->your_color == GELB) && (l == 0) && (r == gs->capsule_row);
+      draw_cell(ctx, x, y, elem, col, phase, sel);
     }
   }
 
@@ -201,7 +204,8 @@ static void draw_board(GContext *ctx, GameState *gs) {
       if (elem == KABEL && l == 3
           && gs->board[VIOLETT][2][r] == FARBTAUSCHER
           && gs->activation[VIOLETT][2][r] >= ACTIVE1) col = GELB;
-      draw_cell(ctx, x, y, elem, col, phase);
+      int sel = (gs->your_color == VIOLETT) && (l == 0) && (r == gs->capsule_row);
+      draw_cell(ctx, x, y, elem, col, phase, sel);
     }
   }
 }
