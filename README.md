@@ -2,6 +2,6 @@
 
 Work your way thought the ranks to captain
 
-![](screenshots/takeover.gif?raw=true)
-![](screenshots/takeover1.gif?raw=true)
+![](screenshots/basalt.gif?raw=true)
+![](screenshots/emery.gif?raw=true)
 
