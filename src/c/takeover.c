@@ -103,8 +103,6 @@ void invent_playground(playground_t board, playground_t activation) {
             if (board[c][l - 1][r] == VERZWEIGUNG_O || board[c][l - 1][r] == VERZWEIGUNG_U
                 || board[c][l - 1][r + 2] == VERZWEIGUNG_O || board[c][l - 1][r + 2] == VERZWEIGUNG_U)
               { r--; continue; }
-            if (board[c][l - 1][r + 1] == KABEL)
-              board[c][l - 1][r + 1] = KABELENDE;
             if (block_class[board[c][l - 1][r]] == CONNECTOR)
               board[c][l - 1][r] = KABELENDE;
             if (block_class[board[c][l - 1][r + 2]] == CONNECTOR)
@@ -133,6 +131,13 @@ void invent_playground(playground_t board, playground_t activation) {
       }
     }
   }
+
+  for (int c = 0; c < TO_COLORS; c++)
+    for (int r = 0; r < NUM_LINES; r++) {
+      int e = board[c][NUM_LAYERS - 2][r];
+      if (e == KABELENDE || e == GATTER_U || e == GATTER_O || e == VERZWEIGUNG_M)
+        board[c][NUM_LAYERS - 1][r] = LEER;
+    }
 }
 
 void process_playground(playground_t board, playground_t activation) {
