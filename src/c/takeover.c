@@ -30,7 +30,7 @@ const int element_prob[TO_ELEMENTS] = {
   10,   // VERSTAERKER
   6,    // FARBTAUSCHER
   8,    // VERZWEIGUNG
-  7     // GATTER
+  3     // GATTER
 };
 
 static int rand_upto(int max) {
@@ -68,7 +68,7 @@ void invent_playground(playground_t board, playground_t activation) {
       for (int r = 0; r < NUM_LINES; r++) {
         if (board[c][l][r] != KABEL) continue;
 
-        int el = rand_upto(TO_ELEMENTS - 1);
+        int el = rand_upto(TO_ELEMENTS);
         if (rand_upto(100) > element_prob[el]) { r--; continue; }
 
         switch (el) {
