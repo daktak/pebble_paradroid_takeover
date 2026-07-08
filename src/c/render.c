@@ -135,7 +135,7 @@ static void draw_cell(GContext *ctx, int x, int y, int elem, int color, int phas
   draw_tile(ctx, x, y, elem, color, phase, selected);
 }
 
-static void draw_led_col(GContext *ctx, int x, int y, int display_column[], int leader) {
+static void draw_led_col(GContext *ctx, int x, int y, int display_column[]) {
   int led_h = (CELL_H - 4) / 2;
   int led_gap = (CELL_H - led_h * 2);
   for (int r = 0; r < NUM_LINES; r++) {
@@ -176,7 +176,7 @@ void draw_board(GContext *ctx, GameState *gs) {
   graphics_fill_rect(ctx, GRect(0, 0, SCREEN_W, SCREEN_H), 0, GCornerNone);
 
   draw_grid(ctx, gs, GELB);
-  draw_led_col(ctx, COL_X, GRID_Y, gs->display_column, gs->leader_color);
+  draw_led_col(ctx, COL_X, GRID_Y, gs->display_column);
   draw_grid(ctx, gs, VIOLETT);
 }
 

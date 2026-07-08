@@ -133,10 +133,6 @@ typedef struct {
 #define HS_ROW_Y 58
 #define HS_ROW_H 18
 #define HS_LATEST_OFF 4
-#define COLOR_SEL_OX 40
-#define COLOR_SEL_OY 50
-#define COLOR_SEL_W 120
-#define COLOR_SEL_H 60
 #define COLOR_SEL_TX 44
 #define COLOR_SEL_TY 54
 #define COLOR_SEL_TW 112
@@ -168,10 +164,6 @@ typedef struct {
 #define HS_ROW_Y 50
 #define HS_ROW_H 15
 #define HS_LATEST_OFF 2
-#define COLOR_SEL_OX 22
-#define COLOR_SEL_OY 40
-#define COLOR_SEL_W 100
-#define COLOR_SEL_H 60
 #define COLOR_SEL_TX 26
 #define COLOR_SEL_TY 44
 #define COLOR_SEL_TW 92
