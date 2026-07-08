@@ -306,8 +306,15 @@ void draw_high_scores(GContext *ctx, HighScoreData *hsd) {
       GRect(0, HS_TITLE_Y, SCREEN_W, 22), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 
   graphics_context_set_text_color(ctx, GColorLightGray);
-  graphics_draw_text(ctx, "#  DROID  DATE", fonts_get_system_font(FONT_KEY_GOTHIC_14),
-      GRect(HS_COL1_X, HS_HEADER_Y, SCREEN_W - 2 * HS_COL1_X, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  snprintf(buf, sizeof(buf), "#");
+  graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+      GRect(HS_COL1_X, HS_HEADER_Y, HS_COL1_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+  snprintf(buf, sizeof(buf), "DROID");
+  graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+      GRect(HS_COL2_X, HS_HEADER_Y, HS_COL2_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+  snprintf(buf, sizeof(buf), "DATE");
+  graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+      GRect(HS_COL3_X, HS_HEADER_Y, HS_COL3_W, 16), GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
 
   graphics_context_set_stroke_color(ctx, GColorDarkGray);
   graphics_draw_line(ctx, GPoint(HS_COL1_X, HS_SEP_Y), GPoint(SCREEN_W - HS_COL1_X, HS_SEP_Y));
