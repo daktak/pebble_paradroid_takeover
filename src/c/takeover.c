@@ -135,7 +135,7 @@ void invent_playground(playground_t board, playground_t activation) {
   for (int c = 0; c < TO_COLORS; c++)
     for (int r = 0; r < NUM_LINES; r++) {
       int e = board[c][NUM_LAYERS - 2][r];
-      if (e == KABELENDE || e == GATTER_U || e == GATTER_O || e == VERZWEIGUNG_M)
+      if (e == KABELENDE || e == GATTER_U || e == GATTER_O || e == VERZWEIGUNG_M || e == LEER)
         board[c][NUM_LAYERS - 1][r] = LEER;
     }
 }
