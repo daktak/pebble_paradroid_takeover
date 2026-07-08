@@ -279,8 +279,6 @@ void draw_phase_screen(GContext *ctx, GameState *gs) {
     draw_droid_show(ctx, "Enemy", gs->enemy.num, GColorVividViolet);
   } else if (gs->phase == PHASE_COLOR_SEL) {
     draw_board(ctx, gs);
-    graphics_context_set_fill_color(ctx, GColorBlack);
-    graphics_fill_rect(ctx, GRect(COLOR_SEL_OX, COLOR_SEL_OY, COLOR_SEL_W, COLOR_SEL_H), 4, GCornersAll);
     char buf[32];
     snprintf(buf, sizeof(buf), "Choose color");
     graphics_context_set_text_color(ctx, GColorWhite);
