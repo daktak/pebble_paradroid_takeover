@@ -1,4 +1,5 @@
 # Pebble Paradroid Takeover
+![](screenshots/banner.gif?raw=true)
 
 Work your way thought the ranks to captain
 
