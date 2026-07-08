@@ -102,23 +102,23 @@ static void draw_tile(GContext *ctx, int x, int y, int elem, int color, int phas
       break;
     case GATTER_O:
       if (x < GRID2_X)
-        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
+        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W / 2 + 1, 3), 0, GCornerNone);
       else
-        graphics_fill_rect(ctx, GRect(mx + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
+        graphics_fill_rect(ctx, GRect(mx - 1, my - 1, CELL_W / 2 + 1, 3), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(mx - 1, my + 2, 3, CELL_H / 2 - 2), 0, GCornerNone);
       break;
     case GATTER_M:
       if (x < GRID2_X)
-        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
-      else
         graphics_fill_rect(ctx, GRect(mx + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
+      else
+        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(mx - 1, y + 1, 3, CELL_H - 1), 0, GCornerNone);
       break;
     case GATTER_U:
       if (x < GRID2_X)
-        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
+        graphics_fill_rect(ctx, GRect(x + 1, my - 1, CELL_W / 2 + 1, 3), 0, GCornerNone);
       else
-        graphics_fill_rect(ctx, GRect(mx + 1, my - 1, CELL_W / 2 - 1, 3), 0, GCornerNone);
+        graphics_fill_rect(ctx, GRect(mx - 1, my - 1, CELL_W / 2 + 1, 3), 0, GCornerNone);
       graphics_fill_rect(ctx, GRect(mx - 1, y + 1, 3, my - y - 2), 0, GCornerNone);
       break;
     case LEER:

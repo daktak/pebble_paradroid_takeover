@@ -1,156 +1,155 @@
 {
-  "name": "Paradroid Takeover",
-  "author": "daktak@domo.ddns.net",
-  "version": "0.2.0",
-  "keywords": [
-    "pebble-app"
-  ],
-  "private": true,
-  "dependencies": {},
-  "pebble": {
-    "displayName": "Paradroid Takeover",
-    "shortName": "Takeover",
-    "longName": "Paradroid Takeover",
-    "uuid": "06cd5b53-79da-4061-bd65-1dc98f7876e6",
-    "sdkVersion": "3",
-    "enableMultiJS": false,
-    "targetPlatforms": [
-      "basalt",
-      "emery"
+    "author": "daktak@domo.ddns.net",
+    "dependencies": {},
+    "keywords": [
+        "pebble-app"
     ],
-    "watchapp": {
-      "watchface": false
-    },
-    "capabilities": [],
-    "messageKeys": [],
-    "resources": {
-      "media": [
-        {
-          "type": "png",
-          "name": "IMAGE_MENU_ICON",
-          "file": "images/menu_icon.png"
+    "name": "paradroid-takeover",
+    "pebble": {
+        "displayName": "Paradroid Takeover",
+        "enableMultiJS": false,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/001.png",
+                    "name": "DROID_001",
+                    "type": "png"
+                },
+                {
+                    "file": "images/123.png",
+                    "name": "DROID_123",
+                    "type": "png"
+                },
+                {
+                    "file": "images/139.png",
+                    "name": "DROID_139",
+                    "type": "png"
+                },
+                {
+                    "file": "images/247.png",
+                    "name": "DROID_247",
+                    "type": "png"
+                },
+                {
+                    "file": "images/249.png",
+                    "name": "DROID_249",
+                    "type": "png"
+                },
+                {
+                    "file": "images/296.png",
+                    "name": "DROID_296",
+                    "type": "png"
+                },
+                {
+                    "file": "images/302.png",
+                    "name": "DROID_302",
+                    "type": "png"
+                },
+                {
+                    "file": "images/329.png",
+                    "name": "DROID_329",
+                    "type": "png"
+                },
+                {
+                    "file": "images/420.png",
+                    "name": "DROID_420",
+                    "type": "png"
+                },
+                {
+                    "file": "images/476.png",
+                    "name": "DROID_476",
+                    "type": "png"
+                },
+                {
+                    "file": "images/493.png",
+                    "name": "DROID_493",
+                    "type": "png"
+                },
+                {
+                    "file": "images/516.png",
+                    "name": "DROID_516",
+                    "type": "png"
+                },
+                {
+                    "file": "images/571.png",
+                    "name": "DROID_571",
+                    "type": "png"
+                },
+                {
+                    "file": "images/598.png",
+                    "name": "DROID_598",
+                    "type": "png"
+                },
+                {
+                    "file": "images/614.png",
+                    "name": "DROID_614",
+                    "type": "png"
+                },
+                {
+                    "file": "images/615.png",
+                    "name": "DROID_615",
+                    "type": "png"
+                },
+                {
+                    "file": "images/629.png",
+                    "name": "DROID_629",
+                    "type": "png"
+                },
+                {
+                    "file": "images/711.png",
+                    "name": "DROID_711",
+                    "type": "png"
+                },
+                {
+                    "file": "images/742.png",
+                    "name": "DROID_742",
+                    "type": "png"
+                },
+                {
+                    "file": "images/751.png",
+                    "name": "DROID_751",
+                    "type": "png"
+                },
+                {
+                    "file": "images/821.png",
+                    "name": "DROID_821",
+                    "type": "png"
+                },
+                {
+                    "file": "images/834.png",
+                    "name": "DROID_834",
+                    "type": "png"
+                },
+                {
+                    "file": "images/883.png",
+                    "name": "DROID_883",
+                    "type": "png"
+                },
+                {
+                    "file": "images/999.png",
+                    "name": "DROID_999",
+                    "type": "png"
+                },
+                {
+                    "file": "images/menu_icon.png",
+                    "menuIcon": true,
+                    "name": "IMAGE_MENU_ICON",
+                    "targetPlatforms": null,
+                    "type": "png"
+                }
+            ]
         },
-        {
-          "type": "png",
-          "name": "DROID_001",
-          "file": "images/001.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_123",
-          "file": "images/123.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_139",
-          "file": "images/139.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_247",
-          "file": "images/247.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_249",
-          "file": "images/249.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_296",
-          "file": "images/296.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_302",
-          "file": "images/302.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_329",
-          "file": "images/329.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_420",
-          "file": "images/420.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_476",
-          "file": "images/476.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_493",
-          "file": "images/493.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_516",
-          "file": "images/516.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_571",
-          "file": "images/571.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_598",
-          "file": "images/598.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_614",
-          "file": "images/614.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_615",
-          "file": "images/615.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_629",
-          "file": "images/629.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_711",
-          "file": "images/711.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_742",
-          "file": "images/742.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_751",
-          "file": "images/751.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_821",
-          "file": "images/821.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_834",
-          "file": "images/834.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_883",
-          "file": "images/883.png"
-        },
-        {
-          "type": "png",
-          "name": "DROID_999",
-          "file": "images/999.png"
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt",
+            "emery"
+        ],
+        "uuid": "06cd5b53-79da-4061-bd65-1dc98f7876e6",
+        "watchapp": {
+            "watchface": false
         }
-      ]
-    }
-  }
+    },
+    "version": "0.3.0"
 }
