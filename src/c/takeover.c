@@ -117,10 +117,8 @@ void invent_playground(playground_t board, playground_t activation) {
             if (block_class[board[c][l - 1][r]] == NON_CONNECTOR
                 || block_class[board[c][l - 1][r + 2]] == NON_CONNECTOR)
               { r--; continue; }
-            if (board[c][l - 1][r + 1] != KABELENDE
-                && board[c][l - 1][r + 1] != LEER
-                && board[c][l - 1][r + 1] != VERZWEIGUNG_M)
-              { r--; continue; }
+            if (block_class[board[c][l - 1][r + 1]] == CONNECTOR)
+              board[c][l - 1][r + 1] = KABELENDE;
             board[c][l][r] = GATTER_O;
             board[c][l][r + 1] = GATTER_M;
             board[c][l][r + 2] = GATTER_U;
