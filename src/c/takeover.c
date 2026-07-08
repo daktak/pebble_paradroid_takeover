@@ -98,11 +98,13 @@ void invent_playground(playground_t board, playground_t activation) {
             break;
           case EL_VERZWEIGUNG:
             if (r > NUM_LINES - 3) { r--; continue; }
-            if (board[c][l - 1][r + 1] != GATTER_M)
+            if (block_class[board[c][l - 1][r + 1]] == NON_CONNECTOR)
               { r--; continue; }
             if (board[c][l - 1][r] == VERZWEIGUNG_O || board[c][l - 1][r] == VERZWEIGUNG_U
                 || board[c][l - 1][r + 2] == VERZWEIGUNG_O || board[c][l - 1][r + 2] == VERZWEIGUNG_U)
               { r--; continue; }
+            if (board[c][l - 1][r + 1] == KABEL)
+              board[c][l - 1][r + 1] = KABELENDE;
             if (block_class[board[c][l - 1][r]] == CONNECTOR)
               board[c][l - 1][r] = KABELENDE;
             if (block_class[board[c][l - 1][r + 2]] == CONNECTOR)
