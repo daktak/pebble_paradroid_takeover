@@ -2,19 +2,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
-#include <locale.h>
 #include "takeover.h"
 
 const int s_droid_types[NUM_DROID_TYPES] = {
   1, 123, 139, 247, 249, 296, 302, 329, 420, 476, 493,
   516, 571, 598, 614, 615, 629, 711, 742, 751,
   821, 834, 883, 999
-};
-
-const char *s_droid_names[NUM_DROID_TYPES] = {
-  "001", "123", "139", "247", "249", "296", "302", "329", "420", "476", "493",
-  "516", "571", "598", "614", "615", "629", "711", "742", "751",
-  "821", "834", "883", "999"
 };
 
 const int block_class[TO_BLOCKS] = {
@@ -47,10 +40,6 @@ static int rand_upto(int max) {
 int droid_class(int num, int max_class) {
   int c = num / 100;
   return c > max_class ? max_class : c;
-}
-
-void format_droid_name(char *buf, int len, int num) {
-  snprintf(buf, len, "%03d", num);
 }
 
 const char *droid_name_str(int num) {
@@ -346,11 +335,8 @@ void init_game(GameState *gs) {
   gs->capsule_row = 0;
   gs->countdown = 0;
   gs->leader_color = REMIS;
-  gs->result = 0;
   gs->tick = 0;
   gs->color_chosen = 0;
-  gs->timer_sec = 0;
-  gs->highlight = 0;
   gs->won = 0;
 
   for (int r = 0; r < NUM_LINES; r++) gs->display_column[r] = r % 2;
