@@ -43,7 +43,7 @@ int droid_class(int num, int max_class) {
 }
 
 const char *droid_name_str(int num) {
-  static char buf[4];
+  static char buf[8];
   snprintf(buf, sizeof(buf), "%03d", num);
   return buf;
 }
@@ -204,9 +204,8 @@ void animate_currents(playground_t activation) {
 }
 
 void process_display_column(playground_t board, playground_t activation,
-    int display_column[], int *leader) {
-  static int flicker = 0;
-  flicker = !flicker;
+    int display_column[], int *leader, int *flicker) {
+  *flicker = !*flicker;
   int conn_layer = NUM_LAYERS - 1;
   int elem_layer = NUM_LAYERS - 2;
   for (int r = 0; r < NUM_LINES; r++) {
@@ -225,7 +224,7 @@ void process_display_column(playground_t board, playground_t activation,
       else if (g_elem != FARBTAUSCHER && v_elem == FARBTAUSCHER)
         display_column[r] = GELB;
       else
-        display_column[r] = flicker ? GELB : VIOLETT;
+        display_column[r] = *flicker ? GELB : VIOLETT;
     }
   }
 
@@ -241,21 +240,19 @@ void process_display_column(playground_t board, playground_t activation,
 
 void enemy_movements(int capsule_countdown[TO_COLORS][NUM_LINES],
     int capsule_cur_row[], playground_t board, playground_t activation,
-    int opp_color, int *enemy_caps) {
+    int opp_color, int *enemy_caps, int *direction) {
   if (*enemy_caps <= 0) return;
-
-  static int direction = 1;
   int row = capsule_cur_row[opp_color];
   switch (rand_upto(3)) {
     case 0:
       if (rand_upto(100) < 100) {
-        row += direction;
+        row += *direction;
         if (row >= NUM_LINES) row = 0;
         if (row < 0) row = NUM_LINES - 1;
       }
       break;
     case 1:
-      if (rand_upto(100) < 10) direction *= -1;
+      if (rand_upto(100) < 10) *direction *= -1;
       break;
     case 2:
       if (rand_upto(100) < 80) {
@@ -336,8 +333,9 @@ void init_game(GameState *gs) {
   gs->countdown = 0;
   gs->leader_color = REMIS;
   gs->tick = 0;
-  gs->color_chosen = 0;
   gs->won = 0;
+  gs->flicker = 0;
+  gs->direction = 1;
 
   for (int r = 0; r < NUM_LINES; r++) gs->display_column[r] = r % 2;
   memset(gs->board, 0, sizeof(gs->board));

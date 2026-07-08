@@ -111,8 +111,9 @@ typedef struct {
   int capsule_countdown[TO_COLORS][NUM_LINES];
   int capsule_cur_row[TO_COLORS];
   int tick;
-  int color_chosen;
   int won;
+  int flicker;
+  int direction;
 } GameState;
 
 // Layout constants — platform aware
@@ -207,11 +208,11 @@ int droid_class(int num, int max_class);
 void clear_playground(playground_t board, playground_t activation, int display_column[]);
 void invent_playground(playground_t board, playground_t activation);
 void process_playground(playground_t board, playground_t activation);
-void process_display_column(playground_t board, playground_t activation, int display_column[], int *leader);
+void process_display_column(playground_t board, playground_t activation, int display_column[], int *leader, int *flicker);
 void process_capsules(playground_t board, playground_t activation, int capsule_countdown[TO_COLORS][NUM_LINES]);
 void animate_currents(playground_t activation);
 void enemy_movements(int capsule_countdown[TO_COLORS][NUM_LINES],
-    int capsule_cur_row[], playground_t board, playground_t activation, int opp_color, int *enemy_caps);
+    int capsule_cur_row[], playground_t board, playground_t activation, int opp_color, int *enemy_caps, int *direction);
 int count_leds(int display_column[], int color);
 void init_game(GameState *gs);
 const char *droid_name_str(int num);

@@ -1,4 +1,5 @@
 #include <locale.h>
+#include <string.h>
 #include "takeover.h"
 #include "render.h"
 
@@ -28,7 +29,8 @@ static void reset_game_state(GameState *gs) {
   gs->countdown = 0;
   gs->leader_color = REMIS;
   gs->tick = 0;
-  gs->color_chosen = 0;
+  gs->flicker = 0;
+  gs->direction = 1;
   gs->capsule_cur_row[GELB] = 0;
   gs->capsule_cur_row[VIOLETT] = 0;
   memset(gs->capsule_countdown, -1, sizeof(gs->capsule_countdown));
@@ -73,10 +75,10 @@ static void timer_cb(void *data) {
       process_playground(gs->board, gs->activation);
       process_playground(gs->board, gs->activation);
       process_capsules(gs->board, gs->activation, gs->capsule_countdown);
-      process_display_column(gs->board, gs->activation, gs->display_column, &gs->leader_color);
+      process_display_column(gs->board, gs->activation, gs->display_column, &gs->leader_color, &gs->flicker);
 
       enemy_movements(gs->capsule_countdown, gs->capsule_cur_row,
-          gs->board, gs->activation, gs->opp_color, &gs->enemy.caps);
+          gs->board, gs->activation, gs->opp_color, &gs->enemy.caps, &gs->direction);
     }
 
     if (anim_tick) {
